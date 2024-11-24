@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/swapnil/mongoapi/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -121,4 +122,38 @@ func GetAllMovies(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(movies)
 
 
+}
+
+func CreateMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "POST")
+	var movie models.Netflix
+	_ = json.NewDecoder(r.Body).Decode(&movie)
+	insertOneMovie(movie)
+	json.NewEncoder(w).Encode(movie)
+}
+
+
+func MarkAsWatched (w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "POST")
+	params := mux.Vars(r)
+	updateOneMovie(params["id"])
+	json.NewEncoder(w).Encode(params["id"])
+}
+
+func DeleteMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "DELETE")
+	params := mux.Vars(r)
+	deleteOneMovie(params["id"])
+	json.NewEncoder(w).Encode(params["id"])
+}
+
+func DeleteAllMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "DELETE")
+	
+	deleteAllMovies()
+	json.NewEncoder(w).Encode("All movies deleted")
 }
