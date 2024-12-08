@@ -9,10 +9,10 @@ import (
 )
 
 type HTTPServer struct {
-	Addr string
+	Addr string `yaml:"address" env-required:"true"`
 }
 type Config struct {
-	Env        string               `yaml:"env" env:"ENV" env-default:"production" env-required:"true"` // providing evn location/-env-default:"production"  setting defult env as production
+	Env        string               `yaml:"env" env:"ENV" env-required:"true"` // providing evn location/-env-default:"production"  setting defult env as production
 	StoragPath string               `yaml:"storage_path" env-required:"true"`
 	HTTPServer `yaml:"http_server"` // struct embedding
 }
