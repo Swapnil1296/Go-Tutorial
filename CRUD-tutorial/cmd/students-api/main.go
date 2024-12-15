@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -12,6 +11,7 @@ import (
 	"time"
 
 	"github.com/Swapnil1296/crud-tutorial/internal/config"
+	"github.com/Swapnil1296/crud-tutorial/internal/http/handlers/student"
 )
 
 // go run cmd/students-api/main.go
@@ -26,9 +26,7 @@ func main() {
 //database setup
 //setup router
 router:=http.NewServeMux()
-router.HandleFunc("GET /",func(w http.ResponseWriter, r*http.Request){
-	w.Write([]byte("welcome to crud operations"))
-})
+router.HandleFunc("POST /api/students",student.StudentHandler())
 //setup server
 server:=http.Server{
 	Addr:cfg.Addr,
@@ -36,8 +34,10 @@ server:=http.Server{
 
 
 }
+// router.HandleFunc("GET /",func(w http.ResponseWriter, r *http.Request){
+// 	w.Write([]byte("welcome to crud operations"))
+// })	
 slog.Info("server started",slog.String("address",cfg.Addr))
-fmt.Printf("server started %s",cfg.HTTPServer.Addr)
 //creating a  channel 
 done:= make(chan os.Signal,1)
 signal.Notify(done,os.Interrupt,syscall.SIGINT, syscall.SIGTERM)
