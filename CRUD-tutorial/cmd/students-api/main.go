@@ -12,6 +12,7 @@ import (
 
 	"github.com/Swapnil1296/crud-tutorial/internal/config"
 	"github.com/Swapnil1296/crud-tutorial/internal/http/handlers/student"
+	"github.com/Swapnil1296/crud-tutorial/internal/storage/sqlite"
 )
 
 // go run cmd/students-api/main.go
@@ -23,7 +24,13 @@ func main() {
 	// laod config 
 	cfg :=config.MustLoad()
 
-//database setup
+//database  connection
+_, err:=sqlite.New(cfg)
+if err != nil{
+	log.Fatalf("failed to create sqlite storage:%s",err.Error())
+}
+slog.Info("sqlite initialized",slog.String("path",cfg.StoragPath),slog.String("env",cfg.Env))
+
 //setup router
 router:=http.NewServeMux()
 router.HandleFunc("POST /api/students",student.StudentHandler())
@@ -54,7 +61,7 @@ slog.Info("shutting down the server")
 ctx, cancel:= context.WithTimeout(context.Background(),5*time.Second)
 defer cancel()
 
-err:=server.Shutdown(ctx)
+err=server.Shutdown(ctx)
 if err != nil{
 	slog.Error("failed to shutdown server", slog.String("error",err.Error()))
 }
